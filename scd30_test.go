@@ -1,9 +1,6 @@
 package scd30
 
 import (
-	"encoding/binary"
-	"fmt"
-	"math"
 	"testing"
 
 	"periph.io/x/conn/v3/i2c/i2ctest"
@@ -49,18 +46,17 @@ func TestSetTemperatureOffset(t *testing.T) {
 	assertNoError(t, err)
 }
 
-func printFloat(f float32) {
-	bits := math.Float32bits(f)
-	data := make([]byte, 4)
-	binary.BigEndian.PutUint32(data, bits)
-	var out []byte
-	crcdata := []byte{data[0], data[1]}
-	out = append(out, crcdata...)
-	out = append(out, crc(crcdata))
-	crcdata = []byte{data[2], data[3]}
-	out = append(out, crcdata...)
-	out = append(out, crc(crcdata))
-	fmt.Printf("f %f out %#v", f, out)
+func TestSetAutomaticSelfCalibration(t *testing.T) {
+
+	bus := &i2ctest.Playback{
+		Ops: []i2ctest.IO{
+			{Addr: addr, W: []byte{0x53, 0x06, 0x0, 0x0, 0x81}, R: nil},
+		},
+	}
+
+	scd30, _ := Open(bus)
+	err := scd30.SetAutomaticSelfCalibration(0)
+	assertNoError(t, err)
 }
 
 func TestHasMeasurement(t *testing.T) {

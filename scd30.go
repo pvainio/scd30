@@ -139,6 +139,13 @@ func (dev SCD30) HasMeasurement() (bool, error) {
 	}
 }
 
+// SetAutomaticSelfCalibration, 1 on, 0 off
+func (dev SCD30) SetAutomaticSelfCalibration(value uint16) error {
+	mutex.Lock()
+	defer mutex.Unlock()
+	return dev.sendCommandArg(0x5306, value)
+}
+
 func (dev SCD30) readData(len int) ([]byte, error) {
 
 	data := make([]byte, len)
