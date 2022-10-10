@@ -146,6 +146,13 @@ func (dev SCD30) SetAutomaticSelfCalibration(value uint16) error {
 	return dev.sendCommandArg(0x5306, value)
 }
 
+// SetForcedCalibration, co2 ppm
+func (dev SCD30) SetForcedCalibration(value uint16) error {
+	mutex.Lock()
+	defer mutex.Unlock()
+	return dev.sendCommandArg(0x5204, value)
+}
+
 func (dev SCD30) readData(len int) ([]byte, error) {
 
 	data := make([]byte, len)
